@@ -337,6 +337,17 @@ void RenderScene()
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "lightPos"), 1, glm::value_ptr(lightPos));
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "viewPos"), 1, glm::value_ptr(camera.position));
 
+	///material uniforms
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "material.ambient"), 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "material.diffuse"), 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "material.specular"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	glUniform1f(glGetUniformLocation(lightningShader.ID, "material.shininess"), 32.0f);
+
+	///light uniforms (one that gets * by each stages of lightning)
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.ambient"), 1, glm::value_ptr(glm::vec3(0.2f, 0.2f, 0.2f)));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.specular"), 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+
 	CreateModelMatrix();
 	CreateViewMatrix();
 	CreateProjectionMatrix();
