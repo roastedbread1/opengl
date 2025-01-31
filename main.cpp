@@ -19,8 +19,16 @@ global_variable unsigned int fragmentShader;
 global_variable int shaderProgram;
 global_variable unsigned int vao;
 global_variable unsigned int ebo;
-global_variable Shader ourShader;
+
+global_variable unsigned int cubeVAO;
+global_variable unsigned int lightCubeVAO;
+
+global_variable Shader lightningShader;
+global_variable Shader lightCube;
 global_variable Shader crossShader;
+
+global_variable glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
 global_variable Image image1;
 global_variable Image image2;
 global_variable glm::mat4 trans;
@@ -28,7 +36,7 @@ global_variable glm::mat4 view;
 global_variable glm::mat4 model;
 global_variable glm::mat4 projection;
 
-//make it a struct!! 
+
 global_variable Camera camera;
 
 
@@ -56,50 +64,49 @@ global_variable unsigned int texture1;
 global_variable unsigned int texture2;
 global_variable unsigned int crosshairVAO, crosshairVBO;
 
-global_variable float vertices[] =
-	{
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+global_variable float vertices[] = {
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+};
 
 global_variable float crosshairVertices[] = {
 	// Horizontal line (x, y)
@@ -122,18 +129,12 @@ void CreateCrosshairBuffers() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(crosshairVertices), crosshairVertices, GL_STATIC_DRAW);
 
 	// Position attribute (2 components now)
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); // Changed to 2
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); 
 	glEnableVertexAttribArray(0);
 
 	glBindVertexArray(0);
 }
-global_variable int indices[] =
-	{
-		//0, 1, 2,
-		//0, 3, 4
-		0, 1, 3,
-		1, 2, 3
-	};
+
 
 global_variable glm::vec3 cubePositions[] = {
 	glm::vec3(0.0f,  0.0f,  0.0f),
@@ -179,7 +180,8 @@ void ProcessInput(GLFWwindow* window)
 	{
 		ProcessKeyboard(&camera, RIGHT, deltaTime);
 	}
-	camera.position.y = 0.0f;
+	//fps style camera
+	//camera.position.y = 0.0f;
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -217,8 +219,9 @@ void CreateVertexBuffer()
 }
 void CreateShader()
 {
-	ReadAndCompileShader(&ourShader, "shader.vs", "shader.fs");
+	ReadAndCompileShader(&lightningShader, "shader.vs", "shader.fs");
 	ReadAndCompileShader(&crossShader, "crosshair.vs", "crosshair.fs");
+	ReadAndCompileShader(&lightCube, "lightning.vs", "lightning.fs");
 }
 
 
@@ -231,9 +234,9 @@ void CreateVertexAttributes()
 	glEnableVertexAttribArray(0);
 
 
-	//texture attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	////texture attribute
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	//glEnableVertexAttribArray(1);
 }
 
 void CreateVertexArrayObject()
@@ -248,33 +251,61 @@ void CreateElementBufferObject()
 	{
 		glGenBuffers(1, &ebo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,GL_STATIC_DRAW);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,GL_STATIC_DRAW);
 	}
+
+void CreateCube()
+{
+
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &vbo);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(cubeVAO);
+
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//normal vector
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+}
+
+
+void CreateLightCube()
+{
+
+	glGenVertexArrays(1, &lightCubeVAO);
+	glBindVertexArray(lightCubeVAO);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+}
 
 void transformation()
 {
 	trans = glm::mat4(1.0f);
 	trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
 	trans = glm::rotate(trans, (GLfloat)glfwGetTime(), glm::vec3(0.0, 0.0, 1.0));
-	//model = glm::rotate(model, (GLfloat)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+
 }
 
 void CreateModelMatrix()
 {
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, (GLfloat)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+	/*model = glm::rotate(model, (GLfloat)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));*/
 }
 void CreateViewMatrix()
 {
-	//position, origin, up
-	//view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
 	view = glm::mat4(1.0f);
-	//const float radius = 10.0f;
-	//float camX = sin(glfwGetTime() ) * radius;
-	//float camZ = cos(glfwGetTime() ) * radius;
-
-
-	//view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	view = GetViewMatrix(&camera);
 
 }
@@ -285,78 +316,62 @@ void CreateProjectionMatrix()
 	projection = glm::perspective(glm::radians(camera.zoom), 1440.0f / 1080.0f, 0.1f, 100.0f);
 }
 
-//idk if I want too keep this
-//void CreateCamera()
-//{
-//	cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-//	cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-//	//inverse direction actually
-//	cameraDirection = glm::normalize(cameraPos - cameraTarget);
-//
-//	up = glm::vec3(0.0f, 1.0f, 0.0f);
-//	cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-//
-//	cameraUp = glm::cross(cameraDirection, cameraRight );
-//
-//}
 
 void RenderScene()
 {
-	//static GLclampf c = 0.0f;
-	glClearColor(0.5f, 0.2f, 0.8f, 1.0f);
 
-	//c += 1.0f / 256.0f;
-	//if (c >= 1.0f)
-	//{
-	//	c = 0.0f;
-	//}
+
+	//glClearColor(0.5f, 0.2f, 0.8f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//glUseProgram(shaderProgram);
 
-	/*color changing */
-	float timeValue = glfwGetTime();
-	float blueValue = (sin(timeValue) / 2.0f) + 0.5f;
-
-	UseShader(&ourShader);
-	/*SetShaderFloat(&ourShader,"ourColor", 1.0f);*/
-
-	transformation();
-	unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
 
 
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+	UseShader(&lightningShader);
+	glUniform3f(glGetUniformLocation(lightningShader.ID, "objectColor"), 1.0f, 0.5f, 0.31f);
+	glUniform3f(glGetUniformLocation(lightningShader.ID, "lightColor"), 1.0f, 1.0f, 1.0f);
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "lightPos"), 1, glm::value_ptr(lightPos));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "viewPos"), 1, glm::value_ptr(camera.position));
+
 	CreateModelMatrix();
 	CreateViewMatrix();
 	CreateProjectionMatrix();
 
 
-	int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+
+
+	int viewLoc = glGetUniformLocation(lightningShader.ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-	int projLoc = glGetUniformLocation(ourShader.ID, "projection");
+	int projLoc = glGetUniformLocation(lightningShader.ID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	glBindVertexArray(vao);
+	glUniformMatrix4fv(glGetUniformLocation(lightningShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+	///render cube
+	glBindVertexArray(cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	///render light cube
+	UseShader(&lightCube);
+	projLoc = glGetUniformLocation(lightCube.ID, "projection");
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+	viewLoc = glGetUniformLocation(lightCube.ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, lightPos);
+	model = glm::scale(model, glm::vec3(0.2f));
+	glUniformMatrix4fv(glGetUniformLocation(lightCube.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	
 
 
-
-	for (unsigned int i = 0; i < 10; i++)
-	{
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, cubePositions[i]);
-		float angle = 20.0f * i;
-		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-		int modelLoc = glGetUniformLocation(ourShader.ID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		
-	}
+	glBindVertexArray(lightCubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	///render crosshair
 	UseShader(&crossShader);
@@ -408,36 +423,21 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
-	
-
-
-
-	LoadImage(&image1, "container.jpg");
-	CreateTexture(&image1, &texture1, 1, GL_RGB);
-	LoadImage(&image2, "Peter_Griffin.png");
-	CreateTexture(&image2, &texture2, 1, GL_RGBA);
-	
-
 
 	CreateShader();
-	CreateVertexArrayObject();
-	CreateVertexBuffer();
-	CreateElementBufferObject();
-	CreateVertexAttributes();
+	//CreateVertexArrayObject();
+	/*CreateVertexBuffer();*/
+	//CreateElementBufferObject();
+	/*CreateVertexAttributes();*/
+	CreateCube();
 
-
-
-
-	
-	UseShader(&ourShader);
-	SetShaderInt(&ourShader, "texture1", 0);
-	SetShaderInt(&ourShader,"texture2", 1);
+	UseShader(&lightningShader);
 
 	CreateModelMatrix();
 	CreateViewMatrix();
 	CreateProjectionMatrix();
 
-	int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+	int projectionLoc = glGetUniformLocation(lightningShader.ID, "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	transformation();
 
@@ -445,7 +445,7 @@ int main()
 	InitCamera(&camera);
 
 	CreateCrosshairBuffers();
-	
+	CreateLightCube();
 
 	while (!glfwWindowShouldClose(window))
 	{
