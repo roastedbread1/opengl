@@ -2,3 +2,4 @@ x64/
 breadman.vcxproj.filters
 breadman.vcxproj
 breadman.vcxproj.user
+packages.config
