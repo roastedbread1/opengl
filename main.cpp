@@ -132,7 +132,7 @@ void CreateCrosshairBuffers() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(crosshairVertices), crosshairVertices, GL_STATIC_DRAW);
 
 	// Position attribute (2 components now)
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); 
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	glBindVertexArray(0);
@@ -251,11 +251,11 @@ void CreateVertexArrayObject()
 }
 
 void CreateElementBufferObject()
-	{
-		glGenBuffers(1, &ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,GL_STATIC_DRAW);
-	}
+{
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,GL_STATIC_DRAW);
+}
 
 void CreateCube()
 {
@@ -288,9 +288,9 @@ void CreateLightCube()
 
 	glGenVertexArrays(1, &lightCubeVAO);
 	glBindVertexArray(lightCubeVAO);
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
@@ -370,6 +370,10 @@ void RenderScene()
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.specular"), 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.direction"), 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
 
+	SetShaderFloat(&lightningShader, "light.constant", 1.0f);
+	SetShaderFloat(&lightningShader, "light.linear", 0.09f);
+	SetShaderFloat(&lightningShader, "light.quadratic", 0.032f);
+
 
 
 	CreateModelMatrix();
@@ -404,7 +408,7 @@ void RenderScene()
 		model = glm::translate(model, cubePositions[i]);
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-		
+
 		glUniformMatrix4fv(glGetUniformLocation(lightningShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -421,7 +425,7 @@ void RenderScene()
 	model = glm::translate(model, lightPos);
 	model = glm::scale(model, glm::vec3(0.2f));
 	glUniformMatrix4fv(glGetUniformLocation(lightCube.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	
+
 
 
 	glBindVertexArray(lightCubeVAO);
@@ -489,7 +493,7 @@ int main()
 	UseShader(&lightningShader);
 
 	LoadImage(&image1, "container2.png");
-	CreateTexture(&image1, &texture1, 1,GL_RGBA);
+	CreateTexture(&image1, &texture1, 1, GL_RGBA);
 	SetShaderInt(&lightningShader, "material.diffuse", 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture1);
