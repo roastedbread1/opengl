@@ -219,9 +219,9 @@ void CreateVertexBuffer()
 }
 void CreateShader()
 {
-	ReadAndCompileShader(&lightningShader, "shader.vs", "shader.fs");
-	ReadAndCompileShader(&crossShader, "crosshair.vs", "crosshair.fs");
-	ReadAndCompileShader(&lightCube, "lightning.vs", "lightning.fs");
+	ReadAndCompileShader(&lightningShader, "shader.vs", "shader.frag");
+	ReadAndCompileShader(&crossShader, "crosshair.vs", "crosshair.frag");
+	ReadAndCompileShader(&lightCube, "lightning.vs", "lightning.frag");
 }
 
 
@@ -343,9 +343,21 @@ void RenderScene()
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "material.specular"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
 	glUniform1f(glGetUniformLocation(lightningShader.ID, "material.shininess"), 32.0f);
 
+
+	///changing light colors
+
+	glm::vec3 lightColor;
+	lightColor.x = sin(glfwGetTime() * 2.0f);
+	lightColor.y = sin(glfwGetTime() * 0.7f);
+	lightColor.z = sin(glfwGetTime() * 1.3f);
+
+	glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+	glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+
 	///light uniforms (one that gets * by each stages of lightning)
-	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.ambient"), 1, glm::value_ptr(glm::vec3(0.2f, 0.2f, 0.2f)));
-	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.ambient"), 1, glm::value_ptr(ambientColor));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.diffuse"), 1, glm::value_ptr(glm::vec3(diffuseColor)));
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.specular"), 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 
 	CreateModelMatrix();

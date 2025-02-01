@@ -1,8 +1,5 @@
 #version 330 core
 
-
-
-
 out vec4 FragColor;
 
 in vec3 Normal;  
@@ -14,6 +11,7 @@ in vec3 FragPos;
     vec3 diffuse;
     vec3 specular;
     float shininess;
+    
 };
 
 struct Light {
