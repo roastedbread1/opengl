@@ -29,6 +29,8 @@ global_variable Shader crossShader;
 
 global_variable glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
+
+
 global_variable Image image1;
 global_variable Image image2;
 global_variable glm::mat4 trans;
@@ -366,6 +368,9 @@ void RenderScene()
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.ambient"), 1, glm::value_ptr(ambientColor));
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.diffuse"), 1, glm::value_ptr(glm::vec3(diffuseColor)));
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.specular"), 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.direction"), 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
+
+
 
 	CreateModelMatrix();
 	CreateViewMatrix();
@@ -392,7 +397,18 @@ void RenderScene()
 
 	///render cube
 	glBindVertexArray(cubeVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		
+		glUniformMatrix4fv(glGetUniformLocation(lightningShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 
 	///render light cube
 	UseShader(&lightCube);
