@@ -339,9 +339,12 @@ void RenderScene()
 
 
 	UseShader(&lightningShader);
+
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.position"), 1, glm::value_ptr(camera.position));
+	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.direction"), 1, glm::value_ptr(camera.front));
+
 	glUniform3f(glGetUniformLocation(lightningShader.ID, "objectColor"), 1.0f, 0.5f, 0.31f);
 	glUniform3f(glGetUniformLocation(lightningShader.ID, "lightColor"), 1.0f, 1.0f, 1.0f);
-	glUniform3fv(glGetUniformLocation(lightningShader.ID, "lightPos"), 1, glm::value_ptr(lightPos));
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "viewPos"), 1, glm::value_ptr(camera.position));
 
 	///material uniforms
@@ -368,13 +371,22 @@ void RenderScene()
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.ambient"), 1, glm::value_ptr(ambientColor));
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.diffuse"), 1, glm::value_ptr(glm::vec3(diffuseColor)));
 	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.specular"), 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
-	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.direction"), 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
+	//glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.direction"), 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
+	
+	//glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.position"), 1, glm::value_ptr(camera.position));
+	//glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.direction"), 1, glm::value_ptr(camera.front));
+	//
+
 
 	SetShaderFloat(&lightningShader, "light.constant", 1.0f);
 	SetShaderFloat(&lightningShader, "light.linear", 0.09f);
 	SetShaderFloat(&lightningShader, "light.quadratic", 0.032f);
+	//SetShaderFloat(&lightningShader, "light.cutOff", glm::cos(glm::radians(12.5f)));
+	SetShaderFloat(&lightningShader, "light.cutOff", glm::cos(glm::radians(10.5f)));
+	SetShaderFloat(&lightningShader, "light.outerCutOff", glm::cos(glm::radians(12.5f)));
+	
 
-
+	
 
 	CreateModelMatrix();
 	CreateViewMatrix();
@@ -415,16 +427,16 @@ void RenderScene()
 	}
 
 	///render light cube
-	UseShader(&lightCube);
-	projLoc = glGetUniformLocation(lightCube.ID, "projection");
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+	//UseShader(&lightCube);
+	//projLoc = glGetUniformLocation(lightCube.ID, "projection");
+	//glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-	viewLoc = glGetUniformLocation(lightCube.ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, lightPos);
-	model = glm::scale(model, glm::vec3(0.2f));
-	glUniformMatrix4fv(glGetUniformLocation(lightCube.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	//viewLoc = glGetUniformLocation(lightCube.ID, "view");
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	//model = glm::mat4(1.0f);
+	//model = glm::translate(model, lightPos);
+	//model = glm::scale(model, glm::vec3(0.2f));
+	//glUniformMatrix4fv(glGetUniformLocation(lightCube.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 
 
