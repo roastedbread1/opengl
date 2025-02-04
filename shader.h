@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <glm.hpp>
 
 struct Shader
 {
@@ -16,3 +17,5 @@ void UseShader(Shader* shader);
 void SetShaderBool(Shader* shader, const std::string& name, bool value);
 void SetShaderInt(Shader* shader, const std::string& name, int value);
 void SetShaderFloat(Shader* shader, const std::string& name, float value);
+void SetShaderVec3(Shader* shader, const std::string& name, glm::vec3& value);
+void SetShaderVec3Scalar(Shader* shader, const std::string& name, float x, float y, float z);

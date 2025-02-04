@@ -102,3 +102,14 @@ void SetShaderFloat(Shader* shader, const std::string& name, float value)
 {
 	glUniform1f(glGetUniformLocation(shader->ID, name.c_str()), value);
 }
+
+void SetShaderVec3(Shader* shader, const std::string &name, glm::vec3& value)
+{
+	glUniform3fv(glGetUniformLocation(shader->ID, name.c_str()), 1, &value[0]);
+}
+
+void SetShaderVec3Scalar(Shader* shader, const std::string& name, float x, float y, float z)
+{
+
+	glUniform3f(glGetUniformLocation(shader->ID, name.c_str()), x, y, z);
+}

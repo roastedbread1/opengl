@@ -152,6 +152,13 @@ global_variable glm::vec3 cubePositions[] = {
 	glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
+glm::vec3 pointLightPositions[] = {
+	glm::vec3(0.7f,  0.2f,  2.0f),
+	glm::vec3(2.3f, -3.3f, -4.0f),
+	glm::vec3(-4.0f,  2.0f, -12.0f),
+	glm::vec3(0.0f,  0.0f, -3.0f)
+};
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -368,9 +375,9 @@ void RenderScene()
 
 
 	///light uniforms (one that gets * by each stages of lightning)
-	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.ambient"), 1, glm::value_ptr(ambientColor));
-	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.diffuse"), 1, glm::value_ptr(glm::vec3(diffuseColor)));
-	glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.specular"), 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+	//glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.ambient"), 1, glm::value_ptr(ambientColor));
+	//glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.diffuse"), 1, glm::value_ptr(glm::vec3(diffuseColor)));
+	//glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.specular"), 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 	//glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.direction"), 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
 	
 	//glUniform3fv(glGetUniformLocation(lightningShader.ID, "light.position"), 1, glm::value_ptr(camera.position));
@@ -378,12 +385,65 @@ void RenderScene()
 	//
 
 
-	SetShaderFloat(&lightningShader, "light.constant", 1.0f);
-	SetShaderFloat(&lightningShader, "light.linear", 0.09f);
-	SetShaderFloat(&lightningShader, "light.quadratic", 0.032f);
+	//directional light
+	SetShaderVec3Scalar(&lightningShader, "dirLight.direction", -0.2f, -1.0f, -0.3f);
+	SetShaderVec3Scalar(&lightningShader, "dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&lightningShader, "dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	SetShaderVec3Scalar(&lightningShader, "dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+	//point light 1
+	SetShaderVec3(&lightningShader, "pointLights[0].position", pointLightPositions[0]);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&lightningShader,"pointLights[0].constant", 1.0f);
+	SetShaderFloat(&lightningShader,"pointLights[0].linear", 0.09f);
+	SetShaderFloat(&lightningShader,"pointLights[0].quadratic", 0.032f);
+
+
+
+	//point light 2
+
+	SetShaderVec3(&lightningShader, "pointLights[1].position", pointLightPositions[1]);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&lightningShader, "pointLights[1].constant", 1.0f);
+	SetShaderFloat(&lightningShader, "pointLights[1].linear", 0.09f);
+	SetShaderFloat(&lightningShader, "pointLights[1].quadratic", 0.032f);
+
+	//point light 3
+	SetShaderVec3(&lightningShader, "pointLights[2].position", pointLightPositions[2]);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&lightningShader, "pointLights[2].constant", 1.0f);
+	SetShaderFloat(&lightningShader, "pointLights[2].linear", 0.09f);
+	SetShaderFloat(&lightningShader, "pointLights[2].quadratic", 0.032f);
+
+	//point light 4
+	SetShaderVec3(&lightningShader, "pointLights[3].position", pointLightPositions[3]);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+	SetShaderVec3Scalar(&lightningShader, "pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&lightningShader, "pointLights[3].constant", 1.0f);
+	SetShaderFloat(&lightningShader, "pointLights[3].linear", 0.09f);
+	SetShaderFloat(&lightningShader, "pointLights[3].quadratic", 0.032f);
+
+
+
+	//spotlight
+	SetShaderVec3(&lightningShader, "spotLight.position", camera.position);
+	SetShaderVec3(&lightningShader, "spotLight.direction", camera.front);
+	SetShaderVec3Scalar(&lightningShader, "spotLight.ambient", 0.0f, 0.0f,0.0f);
+	SetShaderVec3Scalar(&lightningShader, "spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	SetShaderVec3Scalar(&lightningShader, "spotLight.specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&lightningShader, "spotLight.constant", 1.0f);
+	SetShaderFloat(&lightningShader, "spotLight.linear", 0.09f);
+	SetShaderFloat(&lightningShader, "spotLight.quadratic", 0.032f);
 	//SetShaderFloat(&lightningShader, "light.cutOff", glm::cos(glm::radians(12.5f)));
-	SetShaderFloat(&lightningShader, "light.cutOff", glm::cos(glm::radians(10.5f)));
-	SetShaderFloat(&lightningShader, "light.outerCutOff", glm::cos(glm::radians(12.5f)));
+	SetShaderFloat(&lightningShader, "spotLight.cutOff", glm::cos(glm::radians(10.5f)));
+	SetShaderFloat(&lightningShader, "spotLight.outerCutOff", glm::cos(glm::radians(12.5f)));
 	
 
 	
@@ -411,7 +471,7 @@ void RenderScene()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture2);
 
-	///render cube
+	///render cubes
 	glBindVertexArray(cubeVAO);
 	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	for (unsigned int i = 0; i < 10; i++)
@@ -427,21 +487,34 @@ void RenderScene()
 	}
 
 	///render light cube
-	//UseShader(&lightCube);
-	//projLoc = glGetUniformLocation(lightCube.ID, "projection");
-	//glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-	//viewLoc = glGetUniformLocation(lightCube.ID, "view");
-	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	//model = glm::mat4(1.0f);
-	//model = glm::translate(model, lightPos);
-	//model = glm::scale(model, glm::vec3(0.2f));
-	//glUniformMatrix4fv(glGetUniformLocation(lightCube.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 
+
+
+	UseShader(&lightCube);
+	projLoc = glGetUniformLocation(lightCube.ID, "projection");
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+
+	viewLoc = glGetUniformLocation(lightCube.ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+
+	for (unsigned int i = 0; i < 4; i++)
+	{
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, pointLightPositions[i]);
+	model = glm::scale(model, glm::vec3(0.2f));
+	glUniformMatrix4fv(glGetUniformLocation(lightCube.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	glBindVertexArray(lightCubeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
+		
+	}
+
+
+
 
 	///render crosshair
 	UseShader(&crossShader);
