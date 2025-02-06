@@ -49,8 +49,37 @@ global_variable float crosshairVertices[] = {
 	  0.0f, -0.02f,   // Bottom
 	  0.0f,  0.02f    // Top
 };
+#define NR_POINT_LIGHTS 1
+void SetLightingUniforms(Shader& shader)
+{
+	// Set directional light
+	glUniform3f(glGetUniformLocation(shader.ID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+	glUniform3f(glGetUniformLocation(shader.ID, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
+	glUniform3f(glGetUniformLocation(shader.ID, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
+	glUniform3f(glGetUniformLocation(shader.ID, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+
+	// Set camera position
+	glUniform3fv(glGetUniformLocation(shader.ID, "viewPos"), 1, glm::value_ptr(camera.position));
+
+	// Set material properties
+	glUniform1f(glGetUniformLocation(shader.ID, "material.shininess"), 32.0f);
+	//glUniform1f(glGetUniformLocation(shader.ID, "material.diffuse"), 0);
+	//glUniform1f(glGetUniformLocation(shader.ID, "material.specular"), 1);
 
 
+	// Set point lights
+	for (int i = 0; i < NR_POINT_LIGHTS; i++)
+	{
+		std::string number = std::to_string(i);
+		glUniform3f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].position").c_str()), 0.7f, 0.2f, 2.0f);
+		glUniform3f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].ambient").c_str()), 0.05f, 0.05f, 0.05f);
+		glUniform3f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].diffuse").c_str()), 0.8f, 0.8f, 0.8f);
+		glUniform3f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].specular").c_str()), 1.0f, 1.0f, 1.0f);
+		glUniform1f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].constant").c_str()), 1.0f);
+		glUniform1f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].linear").c_str()), 0.09f);
+		glUniform1f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].quadratic").c_str()), 0.032f);
+	}
+}
 
 void CreateCrosshairBuffers() {
 	glGenVertexArrays(1, &crosshairVAO);
@@ -173,6 +202,7 @@ void RenderScene()
 
 
 	UseShader(&modelShader);
+
 	CreateModelMatrix();
 	CreateViewMatrix();
 	CreateProjectionMatrix();
@@ -190,7 +220,7 @@ void RenderScene()
 
 	glUniformMatrix4fv(glGetUniformLocation(modelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	DrawModel(&backpackModel, modelShader);
-
+	SetLightingUniforms(modelShader);
 
 	//model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
 	//model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
