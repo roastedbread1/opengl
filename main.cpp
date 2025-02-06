@@ -21,6 +21,12 @@ global_variable glm::mat4 model;
 global_variable glm::mat4 projection;
 
 global_variable glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 pointLightPositions[] = {
+	glm::vec3(0.7f,  0.2f,  2.0f),
+	glm::vec3(2.3f, -3.3f, -4.0f),
+	glm::vec3(-4.0f,  2.0f, -12.0f),
+	glm::vec3(0.0f,  0.0f, -3.0f)
+};
 
 global_variable Model megalodon;
 
@@ -49,7 +55,7 @@ global_variable float crosshairVertices[] = {
 	  0.0f, -0.02f,   // Bottom
 	  0.0f,  0.02f    // Top
 };
-#define NR_POINT_LIGHTS 1
+
 void SetLightingUniforms(Shader& shader)
 {
 	// Set directional light
@@ -68,17 +74,44 @@ void SetLightingUniforms(Shader& shader)
 
 
 	// Set point lights
-	for (int i = 0; i < NR_POINT_LIGHTS; i++)
-	{
-		std::string number = std::to_string(i);
-		glUniform3f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].position").c_str()), 0.7f, 0.2f, 2.0f);
-		glUniform3f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].ambient").c_str()), 0.05f, 0.05f, 0.05f);
-		glUniform3f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].diffuse").c_str()), 0.8f, 0.8f, 0.8f);
-		glUniform3f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].specular").c_str()), 1.0f, 1.0f, 1.0f);
-		glUniform1f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].constant").c_str()), 1.0f);
-		glUniform1f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].linear").c_str()), 0.09f);
-		glUniform1f(glGetUniformLocation(shader.ID, ("pointLights[" + number + "].quadratic").c_str()), 0.032f);
-	}
+	//point light 1
+	SetShaderVec3(&shader, "pointLights[0].position", pointLightPositions[0]);
+	SetShaderVec3Scalar(&shader, "pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&shader, "pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+	SetShaderVec3Scalar(&shader, "pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&shader, "pointLights[0].constant", 1.0f);
+	SetShaderFloat(&shader, "pointLights[0].linear", 0.09f);
+	SetShaderFloat(&shader, "pointLights[0].quadratic", 0.032f);
+
+
+
+	//point light 2
+
+	SetShaderVec3(&shader, "pointLights[1].position", pointLightPositions[1]);
+	SetShaderVec3Scalar(&shader, "pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&shader, "pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+	SetShaderVec3Scalar(&shader, "pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&shader, "pointLights[1].constant", 1.0f);
+	SetShaderFloat(&shader, "pointLights[1].linear", 0.09f);
+	SetShaderFloat(&shader, "pointLights[1].quadratic", 0.032f);
+
+	//point light 3
+	SetShaderVec3(&shader, "pointLights[2].position", pointLightPositions[2]);
+	SetShaderVec3Scalar(&shader, "pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&shader, "pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+	SetShaderVec3Scalar(&shader, "pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&shader, "pointLights[2].constant", 1.0f);
+	SetShaderFloat(&shader, "pointLights[2].linear", 0.09f);
+	SetShaderFloat(&shader, "pointLights[2].quadratic", 0.032f);
+
+	//point light 4
+	SetShaderVec3(&shader, "pointLights[3].position", pointLightPositions[3]);
+	SetShaderVec3Scalar(&shader, "pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+	SetShaderVec3Scalar(&shader, "pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+	SetShaderVec3Scalar(&shader, "pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+	SetShaderFloat(&shader, "pointLights[3].constant", 1.0f);
+	SetShaderFloat(&shader, "pointLights[3].linear", 0.09f);
+	SetShaderFloat(&shader, "pointLights[3].quadratic", 0.032f);
 }
 
 void CreateCrosshairBuffers() {
