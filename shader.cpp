@@ -1,5 +1,4 @@
 #include "shader.h"
-//https://learnopengl.com/Getting-started/Shaders continue
 void ReadAndCompileShader(Shader* shader, const char* vertexPath, const char* fragmentPath)
 {
 	std::string vertexCode;
