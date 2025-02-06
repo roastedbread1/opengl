@@ -1,5 +1,6 @@
 #pragma once
 #include <glad/glad.h>
+#include "texture.h"
 
 #include <assimp/Importer.hpp> //include this first otherwise some funky stuff happens
 #include <assimp/types.h>
@@ -12,13 +13,12 @@
 #include "shader.h"
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
-#include "stb_image.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <map>
 
-std::vector<Texture> textures_loaded;
+extern std::vector<Texture> textures_loaded;
 
 struct Model
 {

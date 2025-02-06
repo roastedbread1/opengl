@@ -33,6 +33,8 @@ void DrawMesh(Mesh* mesh, Shader& shader)
 		SetShaderInt(&shader, ("material." + name + number).c_str(), i);
 		glBindTexture(GL_TEXTURE_2D, mesh->textures[i].id);
 	}
+	glActiveTexture(GL_TEXTURE0);
+
 
 	glBindVertexArray(mesh->VAO);
 	glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);

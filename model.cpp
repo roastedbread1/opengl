@@ -22,8 +22,9 @@ void ProcessNode(Model* model, aiNode* node, const aiScene* scene)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		ProcessMesh(model->directory,&model->meshes[i], mesh, scene);
-	/*	model->meshes.emplace_back(ProcessMesh(model, mesh, scene));*/
+		///place an empty mesh first and then modify it
+		model->meshes.emplace_back();
+		ProcessMesh(model->directory, &model->meshes.back(), mesh, scene);
 	}
 	//then process its children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -123,8 +124,9 @@ std::vector<Texture> LoadMaterialTextures(std::string directory,aiMaterial* mat,
 			Texture texture;
 			texture.id = TextureFromFile(str.C_Str(), directory, false);
 			texture.type = typeName;
-			texture.path = str.C_Str();
+			texture.path = std::string(str.C_Str());
 			textures.emplace_back(texture);
+			textures_loaded.push_back(texture);
 		}
 	}
 	return textures;
